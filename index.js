@@ -10,7 +10,7 @@ const db = require('./db');
 
 app.use(bodyParser.json())
 
-app.get('/', middlewares.verifyTables, middlewares.verifyToken, (req, res)=>{
+app.get('/', (req, res)=>{
     res.send("OK")
 })
 
