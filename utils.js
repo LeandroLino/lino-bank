@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const Decimal = require('decimal.js');
 
 function IsValidDocument(documentNumber){
     let responseObject = {valid: false,
@@ -115,11 +116,50 @@ async function matchPassword(password, userPassword){
     return await bcrypt.compare(password, userPassword)
 }
 
+function doCalculations(value, currentFounds, movimentType){
+  const valueToSum = new Decimal(value)
+  const validFounds = new Decimal(currentFounds)
+
+  switch (movimentType) {
+    case 'DEPOSIT':
+        return validFounds.plus(valueToSum);
+    case 'WITHDRAWAL':
+        return validFounds.minus(valueToSum);
+    default:
+      return {code: 400,
+              message: "Invalida moviment type"}
+  }
+}
+
+function formatExtract(extractArr){
+  return extractArr.map((v,i)=>{
+  const obj = {id: v.id,
+               moviment: v.movimentType,
+               date: v.date}
+    if(v.recipient_id){
+      obj.recipient_id = v.recipient_id
+    }
+    return obj
+})}
+
+function doCalculationToTransfer(value, userFounds, recipientFounds){
+  const valueToCal = new Decimal(value)
+  const recipientFoundsD = new Decimal(recipientFounds)
+  const userFoundsD = new Decimal(userFounds)
+
+  const recipientFoundsC = recipientFoundsD.plus(valueToCal);
+  const userFoundsC = userFoundsD.minus(valueToCal);
+  return {recipientFounds: recipientFoundsC, userFounds: userFoundsC}
+}
+
 module.exports = {
     IsValidDocument,
     ValidCPF,
     ValidCNPJ,
     formatDocument,
     encryptPassword,
-    matchPassword
+    matchPassword,
+    doCalculations,
+    formatExtract,
+    doCalculationToTransfer,
 };
