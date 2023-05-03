@@ -8,7 +8,7 @@ async function verifyTables(req, res, next){
     next()
   }
   
-  async function verifyToken(req, res, next) {
+async function verifyToken(req, res, next) {
     const token = req.headers['authorization'];
   
     if (!token) {
