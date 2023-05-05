@@ -6,6 +6,9 @@ const middlewares = require('./middlewares')
 const messages = require('./messages')
 const jwt = require('jsonwebtoken');
 
+const cors = require('cors');
+app.use(cors());
+
 const db = require('./db');
 
 app.use(bodyParser.json())
